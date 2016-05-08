@@ -4,7 +4,7 @@ Phalcon2Rest
 A base project for APIs using the [Phalcon2][phalcon] framework
 ---------------------------------------------------
 
-This project is a fork [cmoore4][cmoore4]'s PhalconRest, but modified to work correctly with Phalcon2.
+This project is a fork of [cmoore4][cmoore4]'s PhalconRest, but modified to work correctly with Phalcon2.
 It is including latest phpleague's [OAuth2][OAuth2] at the moment (5.x) and using Json Web Tokens (JWT).
 Rate limiting is implemented as well.
 
@@ -194,11 +194,11 @@ id,author,title
 Errors
 -------
 
-PhalconRest\Exceptions\HttpException extends PHP's native exceptions.  Throwing this type of exception
+Phalcon2Rest\Exceptions\HttpException extends PHP's native exceptions.  Throwing this type of exception
 returns a nicely formatted JSON response to the client.
 
 ```
-throw new \PhalconRest\Exceptions\HttpException(
+throw new \Phalcon2Rest\Exceptions\HttpException(
 	'Could not return results in specified format',
 	403,
 	null
