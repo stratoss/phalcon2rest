@@ -1,0 +1,30 @@
+{
+    "name": "stratoss/phalcon2rest",
+    "version":"1.0.0",
+    "description": "Phalcon2 project with OAuth2, JWT and rate limiting",
+    "keywords": ["phalcon", "phalcon2", "oauth", "api", "oauth2", "JWT"],
+    "type": "project",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/stratoss/phalcon2rest/issues",
+        "wiki": "https://github.com/stratoss/phalcon2rest/wiki",
+        "source": "https://github.com/stratoss/phalcon2rest"
+    },
+    "authors": [
+        {
+            "name": "Stanimir Stoyanov",
+            "email": "stanimir@datacentrix.org"
+        }
+    ],
+    "require": {
+        "league/oauth2-server": "5.*"
+    },
+    "minimum-stability": "dev"
+}
+
+
+
+
+
+
+
