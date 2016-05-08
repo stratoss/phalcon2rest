@@ -107,6 +107,14 @@ Responses
 ```
 curl https://domain/v1/access_token -X POST --data "grant_type=password&client_id=1&client_secret=pass2&username=stan&password=pass&scope=basic"
 ```
+```
+{
+    "tokenType": "Bearer",
+    "expiresIn": 3600,
+    "accessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImUyY2ExYjhiM2ZlODRhM2Q2ZGFmZjZhNmFiZmQwMjJiNzQxMGYxOWNmODAzMWVkOThlNjc4YzVjN2Q3Mjc4MTk0NDFhYzMyNTc5OTM1OTIxIn0.eyJhdWQiOiIxIiwianRpIjoiZTJjYTFiOGIzZmU4NGEzZDZkYWZmNmE2YWJmZDAyMmI3NDEwZjE5Y2Y4MDMxZWQ5OGU2NzhjNWM3ZDcyNzgxOTQ0MWFjMzI1Nzk5MzU5MjEiLCJpYXQiOjE0NjI3MjkxMTgsIm5iZiI6MTQ2MjcyOTExOCwiZXhwIjoxNDYyNzMyNzE4LCJzdWIiOiIxIiwic2NvcGVzIjpbImJhc2ljIl19.VtKS7k1WiebSHiYwSrYJ9D8G90BQE81UkCNr8RI3-Ul3XaUw8kF1mMR-Q7YeO4pISUT48Gu5Sj6fTSsqF1n0Qz3axR-qcJstSwy_T0VZDNQYYdGGoXSRWabiIkLA50lbaPd8YGPLZO3IijgvyZxC3Miz7iUxxz1XOHvzHiDZP5s",
+    "refreshToken": "U8PSWA\/xs\/Qw7\/\/Do76KM61+R6tUQwoex4YmnH0HjUCjzDKR22mRvSSPzkgbuR6EqjaaAp\/QWdBcYjgZj5XOyXAH9LM7C\/uBr4YeLUeTvzf7SylqIlLOuKe6aOZzD+L5ztSNdMCzjCQ1PZSWtk+hm7Ik1lUfXe1A\/09qI+hfG+p5cXHvow26ZSWz42uYaoEV5MAh+VBvR2vWx4WrAa6JJ\/6QISJRu+KTUXJmiGBbzhZiHZJ7+pyTeLiFk\/euT8aTa2tIz5WMogQDhMfzzPadOZY88jrc9mPuwxOv8DPKnysAlYHklnEQzESoP4MmKP0D9yrbLx80eE3PdEnj1hPYcpLIb8Dvc1IK+rIzg9+71HSW5XH54npY7MlLbNPDAB02bdX5SDWJhT8XwN8zqZQiLOUwBgP\/ESjW5dI7ckLzmmguqRPbd3TtNoYGultyFUCIxKH1FVNqJrxgVqJk083KXqFAzcsZw6cxgvies3djGxcPGCzyNRlxuEU8+ZoMJ0u0"
+}
+```
 
 **Retrieving access token using client_credentials grant**
 
