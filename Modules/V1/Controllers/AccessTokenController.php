@@ -12,7 +12,7 @@ class AccessTokenController extends RestController {
     public function post() {
         /** @var AuthorizationServer $server */
         $server = $this->di->get('authorizationServer');
-        $allowedGrandTypes = ['client_credentials', 'password'];
+        $allowedGrandTypes = ['client_credentials', 'password', 'refresh_token'];
         $error = null;
         $result = [];
         $grant_type = $this->request->getPost('grant_type');
