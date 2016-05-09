@@ -57,7 +57,10 @@ $app->get('/', function() use ($app){
 $app->before(function () use ($app, $di) {
     $config = $di->getShared('config');
     // getting access token is permitted ;)
-    if (strpos($app->request->getURI(), '/access_token') !== FALSE) {
+    if (strpos($app->request->getURI(), '/access_token') !== FALSE ||
+        strpos($app->request->getURI(), '/authorize') !== FALSE ||
+        $app->request->isOptions()
+    ) {
         return $di->getShared('rateLimits', ['access_token', $app->request->getClientAddress(), $app]);
     }
 

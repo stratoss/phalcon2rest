@@ -66,7 +66,7 @@ class JsonResponse extends Response {
 
         // HEAD requests are detected in the parent constructor. HEAD does everything exactly the
         // same as GET, but contains no body.
-        if (!$this->head) {
+        if (!$this->head && $message !== null) {
             $response->setJsonContent($message, JSON_PRETTY_PRINT);
         }
 

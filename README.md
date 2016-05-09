@@ -103,6 +103,8 @@ openssl rsa -in private.key -pubout -out public.key
 Responses
 ---------
 
+All route controllers must return an array.  This array is used to create the response object.
+
 **Retrieving access token using password grant**
 
 ```
@@ -143,7 +145,20 @@ curl https://domain/v1/access_token --data "client_id=1&client_secret=pass2&gran
 }
 ```
 
-All route controllers must return an array.  This array is used to create the response object.
+**Retrieving access token using implicit grant**
+
+Checkout `Modules/V1/Controllers/AuthorizeController.php`. Extra step must be taken in order to auth the user.
+
+For simplicity assuming that the process started with a POST request to `https://domain/v1/authorize`
+ sending POST data "response_type=token&client_id=1&scope=basic"
+ and successful client auth, the response would be a redirect to `http://example.com/super-app#access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjBjZDUxMDRkZDg2YTg0OThhZWUyZGQzOGNlYzgzYzRkMTU4MmE4YjM4ZmZjYWY3ZDQ2MjZiZTY0NWUxN2Q0MjJjZWJmMDRlNWY2YjBjNWUxIn0.eyJhdWQiOiIxIiwianRpIjoiMGNkNTEwNGRkODZhODQ5OGFlZTJkZDM4Y2VjODNjNGQxNTgyYThiMzhmZmNhZjdkNDYyNmJlNjQ1ZTE3ZDQyMmNlYmYwNGU1ZjZiMGM1ZTEiLCJpYXQiOjE0NjI3ODg0NzcsIm5iZiI6MTQ2Mjc4ODQ3NywiZXhwIjoxNDYyNzkyMDc3LCJzdWIiOiIxIiwic2NvcGVzIjpbImJhc2ljIl19.mI8E7KVG6NGxBqbZ6nVojtOXbvRCQzjnNcBSRHAbF2SyoKQlQTGAfDmGNxozfKoNh7G60Il84NKYVvwhC3S3-jLhsEgVA0UePnVnGq4V84M0yMBtLJY3puLSIOAoAGuvUjMjSlxNJnqXZ68R3oD1vi3dmA7MVeSELbii2apAyo4&token_type=bearer&expires_in=3600`
+
+**Retrieving access code using authorization code grant**
+Checkout `Modules/V1/Controllers/AuthorizeController.php`. Extra step must be taken in order to auth the user.
+
+For simplicity assuming that the process started with a POST request to `https://domain/v1/authorize`
+ sending POST data "response_type=code&client_id=1&scope=basic"
+ and successful client auth, the response would be a redirect to `http://example.com/super-app?code=ReoVHgGRnMj6IVhAUDUvunKKCi2BvGxfsJ8nGMj%2FIO2ITr6u7%2FJ7epKAIEG%2F0KZMk5Cc5GhWouG8zYHgGwzAHSztOS%2FKKp8krH5rm6e4pIkmhYvy9TCDUF1fdSo0axfZTQm1V9Ja8Ww3GN%2BeMvpmoKCXPNB8VEOs7smkTI9EGJGjVC2bS26ZJKWGuIV1UqyUKEeSiNfvhAqzeZWF2fXhGDDxmawtIPo7C3Vhs9ZW035P%2FKcugRxdT5t5MTkB%2BgRllqNGLo1DCnXvSB9E9H6KOEraMMYdqzcX4YNX8TseBrJINBJM7JUZkjFqQ176DXfnI7ULN7R%2FUJrRwWNdPMuHwQ%3D%3D`
 
 **JSON**
 
@@ -277,7 +292,7 @@ There are 3 rate limiters implemented, configured in `config/config.ini`
 
 r1 = 5
 
-means 1 request per 5 seconds
+This line sets a limit of 1 request per 5 seconds per IP for `/access_token` & `/authorize` endpoints.
 
 > How many unauthorized requests
 
@@ -285,7 +300,8 @@ means 1 request per 5 seconds
 
 r10 = 60
 
-means 10 requests per 1 minute
+This line sets a limit of 10 requests per 1 minute per IP for every other request, when
+authorization header is missing / is invalid. OPTIONS requests are counted here too.
 
 > Everything else
 
@@ -293,7 +309,7 @@ means 10 requests per 1 minute
 
 r600 = 3600
 
-means 600 requests per hour
+600 requests per hour for all authorized consumers. Users and clients are counted separately here.
 
 **Tracking the rate limiter**
 
@@ -329,6 +345,34 @@ When the limit is reached:
 }
 ```
 
+What about CORS?
+================
+
+By extending a controller with RestController we're providing base CORS policy.
+
+The controller will be inspected and Access-Control-Allow-Methods will be populated with all valid methods found.
+
+```
+ curl -I -X OPTIONS https://domain/v1/authorize
+
+ Access-Control-Allow-Methods: POST, OPTIONS
+ Access-Control-Allow-Origin: *
+ Access-Control-Allow-Credentials: true
+ Access-Control-Allow-Headers: origin, x-requested-with, content-type
+```
+
+```
+curl -I -X OPTIONS https://domain/v1/example
+
+Access-Control-Allow-Methods: GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: origin, x-requested-with, content-type
+```
+
+Please note that there is no way to authorize the user with the OPTIONS method, so those requests
+are counted in the rate limiter as unauthorized ones.
+
 Performance optimization
 ========================
 
@@ -336,12 +380,16 @@ By default FileCache is used, which is extremely slow. Consider using memcached 
 In the project we're using sqlite3 as database. Consider using MySQL/PostgreSQL/MongoDB
 or something else with caching up-front.
 
-ToDo
-=====
+Anything else?
+==============
 
 > Revocation of access/refresh tokens are not implemented as this is strongly individual.
 
  Check out `Components\Oauth2\Repositories\AccessTokenRepository.php` and `Components\Oauth2\Repositories\RefreshTokenRepository.php`
+
+ Each access has unique identifier (jti) which could be used for revocation.
+
+ The tokens could be easily debugged using tool like [JWT.io][jwt.io]
 
 [phalcon]: http://phalconphp.com/index
 [phalconDocs]: http://docs.phalconphp.com/en/latest/
@@ -349,3 +397,4 @@ ToDo
 [OAuth2]: https://github.com/thephpleague/oauth2-server
 [cmoore4]: https://github.com/cmoore4/phalcon-rest/
 [oauth2doc]: https://oauth2.thephpleague.com/
+[jwt.io]: https://jwt.io/

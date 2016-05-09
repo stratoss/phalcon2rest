@@ -25,30 +25,14 @@ class AccessTokenController extends RestController {
                     $server->respondToAccessTokenRequest($request, $response);
                     $result = $response->getToken();
                 } catch (OAuthServerException $exception) {
-                    switch($exception->getCode()) {
-                        case 6:
-                            $error = [
-                                'Wrong credentials',
-                                401,
-                                [
-                                    'dev' => $exception->getMessage(),
-                                    'internalCode' => 'P1007',
-                                    'more' => ''
-                                ]
-                            ];
-                            break;
-                        default:
-                            $error = [
-                                'Unknown error',
-                                500,
-                                [
-                                    'dev' => $exception->getMessage(),
-                                    'internalCode' => 'P1006',
-                                    'more' => ''
-                                ]
-                            ];
-                    }
-
+                     $error = [
+                         $exception->getMessage(),
+                         $exception->getHttpStatusCode(),
+                         null,
+                         [
+                             'dev' => $exception->getHint(),
+                         ]
+                     ];
                 } catch (\Exception $exception) {
                     $error = [
                         'Unknown error',
@@ -67,40 +51,14 @@ class AccessTokenController extends RestController {
                     $server->respondToAccessTokenRequest($request, $response);
                     $result = $response->getToken();
                 } catch (OAuthServerException $exception) {
-                    switch ($exception->getCode()) {
-                        case 2:
-                            $error = [
-                                "Missing parameters",
-                                400,
-                                [
-                                    'dev' => 'client_id, client_secret and scope must be sent as well',
-                                    'internalCode' => 'P1002',
-                                    'more' => ''
-                                ]
-                            ];
-                            break;
-                        case 4:
-                            $error = [
-                                'Wrong credentials',
-                                401,
-                                [
-                                    'dev' => $exception->getMessage(),
-                                    'internalCode' => 'P1007',
-                                    'more' => ''
-                                ]
-                            ];
-                            break;
-                        default:
-                            $error = [
-                                'Unknown error',
-                                500,
-                                [
-                                    'dev' => $exception->getMessage(),
-                                    'internalCode' => 'P1004',
-                                    'more' => ''
-                                ]
-                            ];
-                    }
+                    $error = [
+                        $exception->getMessage(),
+                        $exception->getHttpStatusCode(),
+                        null,
+                        [
+                            'dev' => $exception->getHint(),
+                        ]
+                    ];
                 } catch (\Exception $exception) {
                     $error = [
                         'Unknown error',
@@ -114,24 +72,19 @@ class AccessTokenController extends RestController {
                 }
                 break;
             case 'refresh_token':
-
                 try {
                     // Try to respond to the request
                     $server->respondToAccessTokenRequest($request, $response);
                     $result = $response->getToken();
                 } catch (OAuthServerException $exception) {
-                    switch ($exception->getCode()) {
-                        default:
-                            $error = [
-                                'Unknown error',
-                                500,
-                                [
-                                    'dev' => $exception->getMessage(),
-                                    'internalCode' => 'P1004',
-                                    'more' => ''
-                                ]
-                            ];
-                    }
+                    $error = [
+                        $exception->getMessage(),
+                        $exception->getHttpStatusCode(),
+                        null,
+                        [
+                            'dev' => $exception->getHint(),
+                        ]
+                    ];
                 } catch (\Exception $exception) {
                     $error = [
                         'Unknown error',

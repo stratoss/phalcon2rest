@@ -2,15 +2,18 @@
 
 use Phalcon\Di\FactoryDefault as DefaultDI,
     Phalcon\Config\Adapter\Ini as IniConfig,
-    League\OAuth2\Server\ResourceServer,
+    Phalcon2Rest\Components\Oauth2\Repositories\AuthCodeRepository,
     Phalcon2Rest\Components\Oauth2\Repositories\AccessTokenRepository,
-    League\OAuth2\Server\AuthorizationServer,
     Phalcon2Rest\Components\Oauth2\Repositories\ClientRepository,
     Phalcon2Rest\Components\Oauth2\Repositories\ScopeRepository,
-    League\OAuth2\Server\Grant\PasswordGrant,
     Phalcon2Rest\Components\Oauth2\Repositories\UserRepository,
     Phalcon2Rest\Components\Oauth2\Repositories\RefreshTokenRepository,
+    League\OAuth2\Server\AuthorizationServer,
+    League\OAuth2\Server\ResourceServer,
+    League\OAuth2\Server\Grant\AuthCodeGrant,
     League\OAuth2\Server\Grant\ClientCredentialsGrant,
+    League\OAuth2\Server\Grant\ImplicitGrant,
+    League\OAuth2\Server\Grant\PasswordGrant,
     League\OAuth2\Server\Grant\RefreshTokenGrant;
 
 /**
@@ -194,18 +197,26 @@ $di->setShared('authorizationServer', function() use ($di) {
         'file://' . __DIR__ . '/' . $config->oauth['public']      // path to public key
     );
 
+    $userRepository = new UserRepository();
+    $refreshTokenRepository = new RefreshTokenRepository();
+    $authCodeRepository = new AuthCodeRepository();
+
+    $accessTokenLifetime = new \DateInterval($config->oauth['accessTokenLifetime']);
+    $refreshTokenLifetime = new \DateInterval($config->oauth['refreshTokenLifetime']);
+    $authorizationCodeLifetime = new \DateInterval($config->oauth['authorizationCodeLifetime']);
+
     /**
      * Using client_id & client_secret & username & password
      *
      */
     $passwordGrant = new PasswordGrant(
-        new UserRepository(),           // instance of UserRepositoryInterface
-        new RefreshTokenRepository()    // instance of RefreshTokenRepositoryInterface
+        $userRepository,
+        $refreshTokenRepository
     );
-    $passwordGrant->setRefreshTokenTTL(new \DateInterval($config->oauth['refreshTokenLifetime']));
+    $passwordGrant->setRefreshTokenTTL($refreshTokenLifetime);
     $server->enableGrantType(
         $passwordGrant,
-        new \DateInterval($config->oauth['accessTokenLifetime'])
+        $accessTokenLifetime
     );
 
     /**
@@ -214,11 +225,39 @@ $di->setShared('authorizationServer', function() use ($di) {
     $clientCredentialsGrant = new ClientCredentialsGrant();
     $server->enableGrantType(
         $clientCredentialsGrant,
-        new \DateInterval($config->oauth['accessTokenLifetime'])
+        $accessTokenLifetime
     );
 
-    $refreshTokenGrant = new RefreshTokenGrant(new RefreshTokenRepository());
-    $refreshTokenGrant->setRefreshTokenTTL(new DateInterval($config->oauth['refreshTokenLifetime']));
-    $server->enableGrantType($refreshTokenGrant, new DateInterval($config->oauth['accessTokenLifetime']));
+    /**
+     * Using client_id & client_secret
+     */
+    $refreshTokenGrant = new RefreshTokenGrant($refreshTokenRepository);
+    $refreshTokenGrant->setRefreshTokenTTL($refreshTokenLifetime);
+    $server->enableGrantType(
+        $refreshTokenGrant,
+        $accessTokenLifetime
+    );
+
+    /**
+     * Using response_type=code & client_id & redirect_uri & state
+     */
+    $authCodeGrant = new AuthCodeGrant(
+        $authCodeRepository,
+        $refreshTokenRepository,
+        $authorizationCodeLifetime
+    );
+    $authCodeGrant->setRefreshTokenTTL($refreshTokenLifetime);
+    $server->enableGrantType(
+        $authCodeGrant,
+        $accessTokenLifetime
+    );
+
+    /**
+     * Using response_type=token & client_id & redirect_uri & state
+     */
+    $server->enableGrantType(
+        new ImplicitGrant($accessTokenLifetime),
+        $accessTokenLifetime
+    );
     return $server;
 });

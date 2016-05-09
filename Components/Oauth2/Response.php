@@ -39,7 +39,7 @@ class Response implements ResponseInterface {
 
     public function getHeader($name)
     {
-        // TODO: Implement getHeader() method.
+        return $this->response->getHeaders()->get($name);
     }
 
     public function getHeaderLine($name)

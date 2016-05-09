@@ -141,7 +141,7 @@ class Request implements ServerRequestInterface {
 
     public function getQueryParams()
     {
-        // TODO: Implement getQueryParams() method.
+        return $_REQUEST;
     }
 
     public function withQueryParams(array $query)
