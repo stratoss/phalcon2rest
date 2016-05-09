@@ -80,6 +80,22 @@ $di->setShared('rateLimits', function($limitType, $identifier, $app) use ($di) {
 
             if ($cache->exists($cacheName, $seconds)) {
                 $rate = $cache->get($cacheName, $seconds);
+                /**
+                 * using FileCache with many concurrent connections
+                 * around 10% of the time boolean is returned instead of the real cache data.
+                 */
+                if (gettype($rate) === 'boolean') {
+                    throw new \Phalcon2Rest\Exceptions\HttpException(
+                        'Server error',
+                        500,
+                        null,
+                        [
+                            'dev' => 'Please try again in a moment',
+                            'internalCode' => 'P1011',
+                            'more' => ''
+                        ]
+                    );
+                }
                 $rate['remaining']--;
                 $resetAfter = $rate['saved'] + $seconds - time();
                 if ($rate['remaining'] > -1) {

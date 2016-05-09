@@ -10,7 +10,7 @@ Rate limiting is implemented as well.
 
 The Phalcon framework is an awesome PHP framework that exists as a C-extension to the language.
 This allows it to be incredibly fast.  But aside from its quickness, it is an amazingly
-powerful fraemwork with excellent [documentation][phalconDocs] that follows many best practises of
+powerful framework with excellent [documentation][phalconDocs] that follows many best practises of
 modern software development.  This includes using the Direct Injection pattern to handle service
 resolution across classes, a PSR-0 compliant autoloader, MVC architecture (or not), caching
 handlers for database, flatfile, redis, etc.. and a ton of additional features.
@@ -23,13 +23,14 @@ go beyond that and extend the framework such that APIs written using this projec
 REST-ish and have conveniance methods and patterns implemented that are more than a simple
 'echo json_encode($array)'.
 
-Provided are robust Error messages, controllers that parse searching strings and partial responsese,
+Provided are robust Error messages, controllers that parse searching strings and partial responses,
 response classes for sending multiple MIME types based on the request, and examples of how to implement
-authentication in a few ways, as well as a few tempaltes for implementing common REST-ish tasks.
+authentication in a few ways, as well as a few templates for implementing common REST-ish tasks.
 
-It is highly recommended to read through the index.php, HTTPException.php and RESTController.php files, as
-I've tried to comment them extensively.
+It is highly recommended to read through the `index.php`, `Exceptions\HttpException.php`
+and `Modules\V1\Controllers\RestController.php` files.
 
+General information and complete documentation using the OAuth2 server could be found [here][oauth2doc]
 
 API Assumptions
 ---------------
@@ -74,7 +75,7 @@ Overrides any accept headers.  JSON is assumed otherwise.  Return type handler m
 **Suppressed Error Codes**
 
 Some clients require all responses to be a 200 (Flash, for example), even if there was an application error.
-With this paramter included, the application will always return a 200 response code, and clients will be
+With this parameter included, the application will always return a 200 response code, and clients will be
 responsible for checking the response body to ensure a valid response.
 
 > ex: suppress_error_codes=true
@@ -95,7 +96,7 @@ php composer.phar create-project stratoss/phalcon2rest MyAPI --stability dev --n
 Sample keys are generated in the `ssl` folder, you must regenerate your own set before going to production!
 
 ```
-openssl genrsa -out private.key 1024
+openssl genrsa -out private.key 2048
 openssl rsa -in private.key -pubout -out public.key
 ```
 
@@ -172,8 +173,27 @@ curl "https://domain/v1/example?q=(year:2010&fields=(author,title)" -H "Authoriz
 ]
 ```
 
-The envelope can be suppressed for responses via the 'envelope=false' query paramter.  This will return just the record set by itself as the body, and the meta information via X- headers.
+An envelope can be included in responses via the 'envelope=true' query parameter.  This will return the record set and the meta information as the body.
 
+```
+curl "https://domain/v1/example?q=(year:2010&fields=(author,title)" -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+{
+    "_meta": {
+        "status": "SUCCESS",
+        "count": 2
+    },
+    "records": [
+        {
+            "author": "John Doe",
+            "title": "Greatest book"
+        },
+        {
+            "author": "John Doe",
+            "title": "Book of books"
+        }
+    ]
+}
+```
 Often times, database field names are snake_cased.  However, when working with an API, developers
 generally prefer JSON fields to be returned in camelCase (many API requests are from browsers, in JS).
 This project will by default convert all keys in a records response from snake_case to camelCase.
@@ -285,7 +305,7 @@ E-Tag: 6385b20e0a8a3fb0edd588d630573f00
 
 When the limit is reached:
 ```
-< HTTP/1.1 429 Unknown Status Code
+< HTTP/1.1 429 Too Many Requests
 < X-Rate-Limit-Limit: 600
 < X-Rate-Limit-Remaining: 0
 < X-Rate-Limit-Reset: 3355
@@ -302,8 +322,23 @@ When the limit is reached:
 }
 ```
 
+Performance optimization
+========================
+
+By default FileCache is used, which is extremely slow. Consider using memcached or redis.
+In the project we're using sqlite3 as database. Consider using MySQL/PostgreSQL/MongoDB
+or something else with caching up-front.
+
+ToDo
+=====
+
+> Revocation of access/refresh tokens are not implemented as this is strongly individual.
+
+ Check out `Components\Oauth2\Repositories\AccessTokenRepository.php` and `Components\Oauth2\Repositories\RefreshTokenRepository.php`
+
 [phalcon]: http://phalconphp.com/index
 [phalconDocs]: http://docs.phalconphp.com/en/latest/
 [apigeeBook]: https://blog.apigee.com/detail/announcement_new_ebook_on_web_api_design
 [OAuth2]: https://github.com/thephpleague/oauth2-server
 [cmoore4]: https://github.com/cmoore4/phalcon-rest/
+[oauth2doc]: https://oauth2.thephpleague.com/
