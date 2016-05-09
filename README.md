@@ -165,7 +165,7 @@ For simplicity assuming that the process started with a POST request to `https:/
 
 **JSON**
 
-JSON is the default response type.  It comes with an envelope wrapper, so responses will look like this:
+JSON is the default response type. The responses will look like this:
 
 ```
 curl "https://domain/v1/example?q=(id:3)&fields=(author,title,year)" \
