@@ -72,12 +72,10 @@ class RestController extends BaseController {
      * @param boolean $parseQueryString true Can be set to false if a controller needs to be called
      *        from a different controller, bypassing the $allowedFields parse
      */
-    public function __construct($parseQueryString = true) {
-        parent::__construct();
+    public function onConstruct($parseQueryString = true) {
         if ($parseQueryString){
             $this->parseRequest($this->allowedFields);
         }
-
         return;
     }
 
@@ -160,7 +158,7 @@ class RestController extends BaseController {
             }
         }
 
-        // If there's a 'fields' paramter, this is a partial request.  Ensures all the requested fields
+        // If there's a 'fields' parameter, this is a partial request.  Ensures all the requested fields
         // are allowed in partial responses.
         if ($fields) {
             $this->isPartial = true;

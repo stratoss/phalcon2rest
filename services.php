@@ -72,9 +72,11 @@ $di->setShared('cache', function() {
     return $cache;
 });
 
-$di->setShared('rateLimits', function($limitType, $identifier, $app) use ($di) {
-    $cache = $di->getShared('cache');
-    $config = $di->getShared('config');
+$di->setShared('rateLimits', function($limitType, $identifier, $app) {
+    /** @var \Phalcon\Cache\Backend\File $cache */
+    $cache = $app->cache;
+    /** @var \Phalcon\Config\Adapter\Ini $config */
+    $config = $app->config;
     $limitName = $limitType . '_limits';
     if (property_exists($config, $limitName)) {
         foreach ($config->{$limitName} as $limit => $seconds) {
@@ -148,12 +150,10 @@ $di->set('db', function() {
  * is called from a function, and the request body is nto valid JSON or is empty,
  * the program will throw an Exception.
  */
-$di->setShared('requestBody', function() {
-    $in = file_get_contents('php://input');
-    $in = json_decode($in, FALSE);
-
+$di->setShared('requestBody', function() use ($app) {
+    $in = trim($app->request->getJsonRawBody());
     // JSON body could not be parsed, throw exception
-    if($in === null){
+    if($in === '') {
         throw new HttpException(
             'There was a problem understanding the data sent to the server by the application.',
             409,
@@ -178,7 +178,6 @@ $di->setShared('resourceServer', function() use ($di) {
 });
 
 $di->set('security', function () {
-
     $security = new \Phalcon\Security();
 
     // Set the password hashing factor to 12 rounds

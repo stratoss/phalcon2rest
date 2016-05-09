@@ -55,7 +55,7 @@ $app->get('/', function() use ($app){
  */
 
 $app->before(function () use ($app, $di) {
-    $config = $di->getShared('config');
+    $config = $app->config;
     // getting access token is permitted ;)
     if (strpos($app->request->getURI(), '/access_token') !== FALSE ||
         strpos($app->request->getURI(), '/authorize') !== FALSE ||
