@@ -109,8 +109,7 @@ All route controllers must return an array.  This array is used to create the re
 
 ```
 curl https://domain/v1/access_token --data "grant_type=password&client_id=1&client_secret=pass2&username=stan&password=pass&scope=basic"
-```
-```
+
 {
     "tokenType": "Bearer",
     "expiresIn": 3600,
@@ -123,9 +122,7 @@ curl https://domain/v1/access_token --data "grant_type=password&client_id=1&clie
 
 ```
 curl https://domain/v1/access_token --data "grant_type=client_credentials&client_id=1&client_secret=pass2&scope=basic"
-```
 
-```
 {
     "tokenType": "Bearer",
     "expiresIn": 3600,
@@ -134,6 +131,7 @@ curl https://domain/v1/access_token --data "grant_type=client_credentials&client
 ```
 
 **Exchanging refresh token for a new set of refresh token + access token**
+
 ```
 curl https://domain/v1/access_token --data "client_id=1&client_secret=pass2&grant_type=refresh_token&scope=basic&refresh_token=YOUR_REFRESH_TOKEN"
 
@@ -151,14 +149,19 @@ Checkout `Modules/V1/Controllers/AuthorizeController.php`. Extra step must be ta
 
 For simplicity assuming that the process started with a POST request to `https://domain/v1/authorize`
  sending POST data "response_type=token&client_id=1&scope=basic"
- and successful client auth, the response would be a redirect to `http://example.com/super-app#access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjBjZDUxMDRkZDg2YTg0OThhZWUyZGQzOGNlYzgzYzRkMTU4MmE4YjM4ZmZjYWY3ZDQ2MjZiZTY0NWUxN2Q0MjJjZWJmMDRlNWY2YjBjNWUxIn0.eyJhdWQiOiIxIiwianRpIjoiMGNkNTEwNGRkODZhODQ5OGFlZTJkZDM4Y2VjODNjNGQxNTgyYThiMzhmZmNhZjdkNDYyNmJlNjQ1ZTE3ZDQyMmNlYmYwNGU1ZjZiMGM1ZTEiLCJpYXQiOjE0NjI3ODg0NzcsIm5iZiI6MTQ2Mjc4ODQ3NywiZXhwIjoxNDYyNzkyMDc3LCJzdWIiOiIxIiwic2NvcGVzIjpbImJhc2ljIl19.mI8E7KVG6NGxBqbZ6nVojtOXbvRCQzjnNcBSRHAbF2SyoKQlQTGAfDmGNxozfKoNh7G60Il84NKYVvwhC3S3-jLhsEgVA0UePnVnGq4V84M0yMBtLJY3puLSIOAoAGuvUjMjSlxNJnqXZ68R3oD1vi3dmA7MVeSELbii2apAyo4&token_type=bearer&expires_in=3600`
+ and successful client auth, the response would be a redirect to
+
+ `http://example.com/super-app#access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjBjZDUxMDRkZDg2YTg0OThhZWUyZGQzOGNlYzgzYzRkMTU4MmE4YjM4ZmZjYWY3ZDQ2MjZiZTY0NWUxN2Q0MjJjZWJmMDRlNWY2YjBjNWUxIn0.eyJhdWQiOiIxIiwianRpIjoiMGNkNTEwNGRkODZhODQ5OGFlZTJkZDM4Y2VjODNjNGQxNTgyYThiMzhmZmNhZjdkNDYyNmJlNjQ1ZTE3ZDQyMmNlYmYwNGU1ZjZiMGM1ZTEiLCJpYXQiOjE0NjI3ODg0NzcsIm5iZiI6MTQ2Mjc4ODQ3NywiZXhwIjoxNDYyNzkyMDc3LCJzdWIiOiIxIiwic2NvcGVzIjpbImJhc2ljIl19.mI8E7KVG6NGxBqbZ6nVojtOXbvRCQzjnNcBSRHAbF2SyoKQlQTGAfDmGNxozfKoNh7G60Il84NKYVvwhC3S3-jLhsEgVA0UePnVnGq4V84M0yMBtLJY3puLSIOAoAGuvUjMjSlxNJnqXZ68R3oD1vi3dmA7MVeSELbii2apAyo4&token_type=bearer&expires_in=3600`
 
 **Retrieving access code using authorization code grant**
+
 Checkout `Modules/V1/Controllers/AuthorizeController.php`. Extra step must be taken in order to auth the user.
 
 For simplicity assuming that the process started with a POST request to `https://domain/v1/authorize`
  sending POST data "response_type=code&client_id=1&scope=basic"
- and successful client auth, the response would be a redirect to `http://example.com/super-app?code=ReoVHgGRnMj6IVhAUDUvunKKCi2BvGxfsJ8nGMj%2FIO2ITr6u7%2FJ7epKAIEG%2F0KZMk5Cc5GhWouG8zYHgGwzAHSztOS%2FKKp8krH5rm6e4pIkmhYvy9TCDUF1fdSo0axfZTQm1V9Ja8Ww3GN%2BeMvpmoKCXPNB8VEOs7smkTI9EGJGjVC2bS26ZJKWGuIV1UqyUKEeSiNfvhAqzeZWF2fXhGDDxmawtIPo7C3Vhs9ZW035P%2FKcugRxdT5t5MTkB%2BgRllqNGLo1DCnXvSB9E9H6KOEraMMYdqzcX4YNX8TseBrJINBJM7JUZkjFqQ176DXfnI7ULN7R%2FUJrRwWNdPMuHwQ%3D%3D`
+ and successful client auth, the response would be a redirect to
+
+ `http://example.com/super-app?code=ReoVHgGRnMj6IVhAUDUvunKKCi2BvGxfsJ8nGMj%2FIO2ITr6u7%2FJ7epKAIEG%2F0KZMk5Cc5GhWouG8zYHgGwzAHSztOS%2FKKp8krH5rm6e4pIkmhYvy9TCDUF1fdSo0axfZTQm1V9Ja8Ww3GN%2BeMvpmoKCXPNB8VEOs7smkTI9EGJGjVC2bS26ZJKWGuIV1UqyUKEeSiNfvhAqzeZWF2fXhGDDxmawtIPo7C3Vhs9ZW035P%2FKcugRxdT5t5MTkB%2BgRllqNGLo1DCnXvSB9E9H6KOEraMMYdqzcX4YNX8TseBrJINBJM7JUZkjFqQ176DXfnI7ULN7R%2FUJrRwWNdPMuHwQ%3D%3D`
 
 **JSON**
 
@@ -370,7 +373,7 @@ Access-Control-Allow-Credentials: true
 Access-Control-Allow-Headers: origin, x-requested-with, content-type
 ```
 
-Please note that there is no way to authorize the user with the OPTIONS method, so those requests
+Please note that there is no way to safely authorize the user with the OPTIONS method, so those requests
 are counted in the rate limiter as unauthorized ones.
 
 Performance optimization
