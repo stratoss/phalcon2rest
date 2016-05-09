@@ -10,6 +10,13 @@ class Response implements ResponseInterface {
     /** @var  Stream $stream */
     private $stream;
 
+    private $response;
+
+    public function __construct(\Phalcon\Http\Response $response)
+    {
+        $this->response = $response;
+    }
+
     public function getProtocolVersion()
     {
         // TODO: Implement getProtocolVersion() method.
@@ -42,7 +49,7 @@ class Response implements ResponseInterface {
 
     public function withHeader($name, $value)
     {
-        // TODO: Implement withHeader() method.
+        $this->response->setHeader($name, $value);
         return $this;
     }
 
@@ -74,7 +81,7 @@ class Response implements ResponseInterface {
 
     public function withStatus($code, $reasonPhrase = '')
     {
-        // TODO: Implement withStatus() method.
+        $this->response->setStatusCode($code, $reasonPhrase);
         return $this;
     }
 

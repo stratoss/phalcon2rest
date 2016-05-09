@@ -5,7 +5,7 @@ A base project for APIs using the [Phalcon2][phalcon] framework
 ---------------------------------------------------
 
 This project is a fork of [cmoore4][cmoore4]'s PhalconRest, but modified to work correctly with Phalcon2.
-It is including latest phpleague's [OAuth2][OAuth2] at the moment (5.x) and using Json Web Tokens (JWT).
+It is including latest phpleague's [OAuth2 Server][OAuth2] at the moment (5.x) and using Json Web Tokens (JWT).
 Rate limiting is implemented as well.
 
 The Phalcon framework is an awesome PHP framework that exists as a C-extension to the language.
@@ -106,7 +106,7 @@ Responses
 **Retrieving access token using password grant**
 
 ```
-curl https://domain/v1/access_token -X POST --data "grant_type=password&client_id=1&client_secret=pass2&username=stan&password=pass&scope=basic"
+curl https://domain/v1/access_token --data "grant_type=password&client_id=1&client_secret=pass2&username=stan&password=pass&scope=basic"
 ```
 ```
 {
@@ -120,7 +120,7 @@ curl https://domain/v1/access_token -X POST --data "grant_type=password&client_i
 **Retrieving access token using client_credentials grant**
 
 ```
-curl https://domain/v1/access_token -X POST --data "grant_type=client_credentials&client_id=1&client_secret=pass2&scope=basic"
+curl https://domain/v1/access_token --data "grant_type=client_credentials&client_id=1&client_secret=pass2&scope=basic"
 ```
 
 ```
@@ -133,7 +133,7 @@ curl https://domain/v1/access_token -X POST --data "grant_type=client_credential
 
 **Exchanging refresh token for a new set of refresh token + access token**
 ```
-curl https://domain/v1/access_token -X POST --data "client_id=1&client_secret=pass2&grant_type=refresh_token&scope=basic&refresh_token=YOUR_REFRESH_TOKEN"
+curl https://domain/v1/access_token --data "client_id=1&client_secret=pass2&grant_type=refresh_token&scope=basic&refresh_token=YOUR_REFRESH_TOKEN"
 
 {
     "tokenType": "Bearer",
@@ -150,7 +150,8 @@ All route controllers must return an array.  This array is used to create the re
 JSON is the default response type.  It comes with an envelope wrapper, so responses will look like this:
 
 ```
-curl "https://domain/v1/example?q=(id:3)&fields=(author,title,year)" -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+curl "https://domain/v1/example?q=(id:3)&fields=(author,title,year)" \
+    -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 
 [
     {
@@ -160,7 +161,9 @@ curl "https://domain/v1/example?q=(id:3)&fields=(author,title,year)" -H "Authori
     }
 ]
 
-curl "https://domain/v1/example?q=(year:2010&fields=(author,title)" -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+curl "https://domain/v1/example?q=(year:2010)&fields=(author,title)" \
+    -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+
 [
     {
         "author": "John Doe",
@@ -176,7 +179,9 @@ curl "https://domain/v1/example?q=(year:2010&fields=(author,title)" -H "Authoriz
 An envelope can be included in responses via the 'envelope=true' query parameter.  This will return the record set and the meta information as the body.
 
 ```
-curl "https://domain/v1/example?q=(year:2010&fields=(author,title)" -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+curl "https://domain/v1/example?q=(year:2010)&fields=(author,title)" \
+    -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+
 {
     "_meta": {
         "status": "SUCCESS",
@@ -205,7 +210,9 @@ This can be turned off for your API by setting the JSONResponse's function "conv
 CSV is the other implemented handler.  It uses the first record's keys as the header row, and then creates a csv from each row in the array.  The header row can be toggled off for responses.
 
 ```
-curl "https://domain/v1/example?q=(year:2010)&fields=(id,author,title)&type=csv" -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+curl "https://domain/v1/example?q=(year:2010)&fields=(id,author,title)&type=csv" \
+    -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+
 id,author,title
 1,"John Doe","Greatest book"
 2,"John Doe","Book of books"

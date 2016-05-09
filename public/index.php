@@ -70,7 +70,7 @@ $app->before(function () use ($app, $di) {
         );
 
         $auth = new \League\OAuth2\Server\Middleware\ResourceServerMiddleware($server);
-        $auth(new \Phalcon2Rest\Components\Oauth2\Request($app->request), new \Phalcon2Rest\Components\Oauth2\Response(), function(){});
+        $auth(new \Phalcon2Rest\Components\Oauth2\Request($app->request), new \Phalcon2Rest\Components\Oauth2\Response($app->response), function(){});
         if (isset($_SERVER['oauth_access_token_id']) &&
             isset($_SERVER['oauth_client_id']) &&
             isset($_SERVER['oauth_user_id']) &&

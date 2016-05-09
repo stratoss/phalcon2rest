@@ -17,7 +17,7 @@ class AccessTokenController extends RestController {
         $result = [];
         $grant_type = $this->request->getPost('grant_type');
         $request = new Request($this->request);
-        $response = new Response();
+        $response = new Response($this->response);
         switch($grant_type) {
             case 'password':
                 try {

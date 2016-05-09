@@ -51,11 +51,17 @@ class Request implements ServerRequestInterface {
 
     public function getHeader($name)
     {
-        // TODO: Implement getHeader() method.
+        $header = [];
         if ($name === 'authorization') {
-            return [$_SERVER['HTTP_AUTHORIZATION']];
+            $name = 'HTTP_AUTHORIZATION';
         }
-        return [];
+        if (
+            ($value = $this->request->getServer($name)) !== NULL ||
+            ($value = $this->request->getHeader($name)) !== NULL
+        ) {
+            $header[] = $value;
+        }
+        return $header;
     }
 
     public function getHeaderLine($name)
@@ -170,7 +176,6 @@ class Request implements ServerRequestInterface {
 
     public function withAttribute($name, $value)
     {
-        // TODO: Implement withAttribute() method.
         $_SERVER[$name] = $value;
         return $this;
     }
