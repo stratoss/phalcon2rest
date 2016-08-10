@@ -149,6 +149,7 @@ $app->after(function() use ($app) {
         throw new \Phalcon2Rest\Exceptions\HttpException(
             'Could not return results in specified format',
             403,
+            false,
             array(
                 'dev' => 'Could not understand type specified by type parameter in query string.',
                 'internalCode' => 'NF1000',
@@ -166,6 +167,7 @@ $app->notFound(function () use ($app) {
     throw new \Phalcon2Rest\Exceptions\HttpException(
         'Not Found.',
         404,
+        false,
         array(
             'dev' => 'That route was not found on the server.',
             'internalCode' => 'NF1000',
